@@ -1,0 +1,299 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.17134}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9\par
+\par
+\par
+\par
+\par
+\par
+#include <iostream>\par
+#include <stdlib.h>\tab\tab //srand, rand\par
+#include <time.h>\tab\tab //clock_t, clock, CLOCKS_PER_SEC\par
+using namespace std;\par
+\par
+class Node\par
+\{\par
+private:\par
+  int data;\par
+  Node *nextNodePtr;\par
+public:\par
+    Node ()\par
+  \{\par
+  \}\par
+  void setData (int d)\par
+  \{\par
+    data = d;\par
+  \}\par
+  int getData ()\par
+  \{\par
+    return data;\par
+  \}\par
+  void setNextNodePtr (Node * nodePtr)\par
+  \{\par
+    nextNodePtr = nodePtr;\par
+  \}\par
+  Node *getNextNodePtr ()\par
+  \{\par
+    return nextNodePtr;\par
+  \}\par
+\};\par
+\par
+class List\par
+\{\par
+\par
+private:\par
+  Node * headPtr;\par
+public:\par
+  List ()\par
+  \{\par
+    headPtr = new Node ();\par
+    headPtr->setNextNodePtr (0);\par
+  \}\par
+  Node *getHeadPtr ()\par
+  \{\par
+    return headPtr;\par
+  \}\par
+  bool isEmpty ()\par
+  \{\par
+    if (headPtr->getNextNodePtr () == 0)\par
+      return true;\par
+    return false;\par
+  \}\par
+  void insert (int data)\par
+  \{\par
+    Node *currentNodePtr = headPtr->getNextNodePtr ();\par
+    Node *prevNodePtr = headPtr;\par
+    while (currentNodePtr != 0)\par
+      \{\par
+\tab prevNodePtr = currentNodePtr;\par
+\tab currentNodePtr = currentNodePtr->getNextNodePtr ();\par
+      \}\par
+    Node *newNodePtr = new Node ();\par
+    newNodePtr->setData (data);\par
+    newNodePtr->setNextNodePtr (0);\par
+    prevNodePtr->setNextNodePtr (newNodePtr);\par
+  \}\par
+  void insertAtIndex (int insertIndex, int data)\par
+  \{\par
+    Node *currentNodePtr = headPtr->getNextNodePtr ();\par
+    Node *prevNodePtr = headPtr;\par
+    int index = 0;\par
+    while (currentNodePtr != 0)\par
+      \{\par
+\tab if (index == insertIndex)\par
+\tab   break;\par
+\tab prevNodePtr = currentNodePtr;\par
+\tab currentNodePtr = currentNodePtr->getNextNodePtr ();\par
+\tab index++;\par
+      \}\par
+    Node *newNodePtr = new Node ();\par
+    newNodePtr->setData (data);\par
+    newNodePtr->setNextNodePtr (currentNodePtr);\par
+    prevNodePtr->setNextNodePtr (newNodePtr);\par
+  \}\par
+  int read (int readIndex)\par
+  \{\par
+    Node *currentNodePtr = headPtr->getNextNodePtr ();\par
+    Node *prevNodePtr = headPtr;\par
+    int index = 0;\par
+    while (currentNodePtr != 0)\par
+      \{\par
+\tab if (index == readIndex)\par
+\tab   return currentNodePtr->getData ();\par
+\tab prevNodePtr = currentNodePtr;\par
+\tab currentNodePtr = currentNodePtr->getNextNodePtr ();\par
+\tab index++;\par
+      \}\par
+    return -1;\tab\tab\tab // an invalid value indicating\par
+    // index is out of range\par
+  \}\par
+\par
+  bool deleteElement (int deleteData)\par
+  \{\par
+    Node *currentNodePtr = headPtr->getNextNodePtr ();\par
+    Node *prevNodePtr = headPtr;\par
+    Node *nextNodePtr = headPtr;\par
+    while (currentNodePtr != 0)\par
+      \{\par
+\tab if (currentNodePtr->getData () == deleteData)\par
+\tab   \{\par
+\tab     nextNodePtr = currentNodePtr->getNextNodePtr ();\par
+\tab     prevNodePtr->setNextNodePtr (nextNodePtr);\par
+\tab     return true;\par
+\tab   \}\par
+\tab prevNodePtr = currentNodePtr;\par
+\tab currentNodePtr = currentNodePtr->getNextNodePtr ();\par
+      \}\par
+    return false;\par
+  \}\par
+  int countList ()\par
+  \{\par
+    Node *currentNodePtr = headPtr->getNextNodePtr ();\par
+    int numElements = 0;\par
+    while (currentNodePtr != 0)\par
+      \{\par
+\tab numElements++;\par
+\tab currentNodePtr = currentNodePtr->getNextNodePtr ();\par
+      \}\par
+    return numElements;\par
+  \}\par
+\par
+  void IterativePrint ()\par
+  \{\par
+    Node *currentNodePtr = headPtr->getNextNodePtr ();\par
+    while (currentNodePtr != 0)\par
+      \{\par
+\tab cout << currentNodePtr->getData () << " ";\par
+\tab currentNodePtr = currentNodePtr->getNextNodePtr ();\par
+      \}\par
+    cout << endl;\par
+  \}\par
+  bool containsElement (int searchData)\par
+  \{\par
+    Node *currentNodePtr = headPtr->getNextNodePtr ();\par
+    while (currentNodePtr != 0)\par
+      \{\par
+\tab if (currentNodePtr->getData () == searchData)\par
+\tab   return true;\par
+\tab currentNodePtr = currentNodePtr->getNextNodePtr ();\par
+      \}\par
+    return false;\par
+  \}\par
+\par
+  void removeAllElements ()\par
+  \{\par
+    headPtr->setNextNodePtr (0);\par
+  \}\par
+\};\par
+\par
+\par
+class Hashtable\par
+\{\par
+private:\par
+  List * listArray;\par
+  int tableSize;\par
+public:\par
+    Hashtable (int size)\par
+  \{\par
+    tableSize = size;\par
+    listArray = new List[size];\par
+  \}\par
+  int getTableSize ()\par
+  \{\par
+    return tableSize;\par
+  \}\par
+  void insert (int data)\par
+  \{\par
+    int hashIndex = data % tableSize;\par
+    listArray[hashIndex].insert (data);\par
+  \}\par
+  void deleteElement (int data)\par
+  \{\par
+    int hashIndex = data % tableSize;\par
+    //while (listArray[hashIndex].deleteElement(data));\par
+    listArray[hashIndex].deleteElement (data);\par
+  \}\par
+  bool hasElement (int data)\par
+  \{\par
+    int hashIndex = data % tableSize;\par
+    return listArray[hashIndex].containsElement (data);\par
+  \}\par
+  void printHashTable ()\par
+  \{\par
+    for (int hashIndex = 0; hashIndex < tableSize; hashIndex++)\par
+      \{\par
+\tab cout << "Hash Index: " << hashIndex << " : ";\par
+\tab listArray[hashIndex].IterativePrint ();\par
+      \}\par
+  \}\par
+  void removeAllElements ()\par
+  \{\par
+    for (int hashIndex = 0; hashIndex < tableSize; hashIndex++)\par
+      listArray[hashIndex].getHeadPtr ()->setNextNodePtr (0);\par
+  \}\par
+\};\par
+\par
+int\par
+main ()\par
+\{\par
+\par
+  int numLists;\par
+  cout << "Enter the number of lists: ";\par
+  cin >> numLists;\par
+  int numElements;\par
+  cout << "Enter the number of elements per list: ";\par
+  cin >> numElements;\par
+  int maxValue;\par
+  cout << "Enter the maximum value for an element: ";\par
+  cin >> maxValue;\par
+\par
+  int hashTableSize;\par
+  cout << "Enter the size of the hash table: ";\par
+  cin >> hashTableSize;\par
+  cout << endl;\par
+  Hashtable hashTable (hashTableSize);\par
+  srand (time (NULL));\par
+  List *listArray = new List[numLists];\par
+  for (int listArrayIndex = 0; listArrayIndex < numLists; listArrayIndex++)\par
+    \{\par
+\par
+      cout << "Elements generated in List # " << (listArrayIndex) << endl;\par
+\par
+      for (int index = 0; index < numElements; index++)\par
+\tab\{\par
+\tab   int value = rand () % maxValue;\par
+\tab   listArray[listArrayIndex].insert (value);\par
+\tab\}\par
+      listArray[listArrayIndex].IterativePrint ();\par
+    \}\par
+  List CommonElementsList;\par
+  for (int index = 0; index < numElements; index++)\par
+    \{\par
+      int value = listArray[0].read (index);\par
+      hashTable.insert (value);\par
+      CommonElementsList.insert (value);\par
+    \}\par
+  // Continue with the above code and implement here your algorithm to determine\par
+  // the common elements in all the lists\par
+  // Include print statements to print the common elements found\par
+  // among the lists scanned (the lists are scanned one at a time)\par
+  // as shown in the sample screenshot in the project description.\par
+\par
+  for (int ind = 1; ind < numLists; ind++)\par
+    \{\par
+      cout << "\\nCommon elements from list number zero to list " << ind << "\\n";\par
+      CommonElementsList.removeAllElements ();\par
+\par
+\par
+      for (int a = 0; a < numElements; a++)         \par
+\tab\{\par
+\tab   if (hashTable.hasElement (listArray[ind].read (a)) != false)\par
+\tab     \{\par
+\tab       hashTable.deleteElement (listArray[ind].read (a));\par
+\tab       CommonElementsList.insert (listArray[ind].read (a));\par
+\tab     \}\par
+\tab\}\par
+\par
+      hashTable.removeAllElements ();\par
+\par
+      int count = CommonElementsList.countList ();\par
+      for (int m = 0; m < count; m++)\par
+\tab\{\par
+\tab   hashTable.insert (CommonElementsList.read (m));\par
+\tab\}\par
+\par
+      CommonElementsList.IterativePrint ();\par
+    \}\par
+\par
+\par
+  cout << "\\nCommon elements in all the lists " << endl;\par
+  CommonElementsList.IterativePrint ();\par
+\par
+\par
+  system ("pause");\par
+  return 0;\par
+\}\par
+\par
+\par
+}
+ 
